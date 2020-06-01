@@ -9,25 +9,29 @@ npm i -S fluent-reducer immer react
 ```
 
 ### 1. Define State Object
-```
-interface ROOT_STATE {
+```./example/src/reducers/RootReducers.ts
+export interface IRootState {
   name: string
 }
-const DEFAULT_STATE: ROOT_STATE = {
-  name: 'sable'
+const RootState: IRootState = {
+  name: 'unknown'
 }
 ```
 
 ### 2. Create FluentReducer
-```
-const reducer = new FluentReducer<ROOT_STATE>()
+```./example/src/reducers/RootReducers.ts
+export const rootReducer = new FluentReducer<IRootState>(RootState, {
+  verbose: true,
+  middlewares: [(state) => {
+    console.log(state)
+  }]
+})
 ```
 
 ### 3. Sync Action
-
-```
-const changeState = reducer.sync<string>('CHANGE_NAME', (state, payload) => {
-  state.name = payload
+```./example/src/reducers/RootReducers.ts
+export const changeName = rootReducer.sync('CHANGE_NAME', (state, name) => {
+  state.name = name
 })
 ```
 
@@ -56,14 +60,39 @@ const asyncChangeState = reducer.async<string, string, Error>('ASYNC_CHANGE_NAME
 
 ### 5. hooks
 
-```
+```./example/src/MyExample.tsx
 export const MyExample: React.FC = () => {
-  const [state, dispatch] = useFluentReducer<ROOT_STATE>(reducer, DEFAULT_STATE)
-  useEffect(() => {
-    dispatch(asyncChangeState('done'))
+  const [state, dispatch] = useRootContext()
+  const _handleOnClick = useCallback(() => {
+    dispatch(changeName(Date.now().toString()))
   }, [dispatch])
   return (
-    <div>{state.name}</div>
+    <div onClick={_handleOnClick}>{state.name}</div>
   )
+}
+```
+
+## TIPS
+
+with ContextAPI
+
+```./example/src/context/RootContext.tsx
+import { useFluentReducer, ReducerResponse } from 'fluent-reducer'
+import React, { useContext } from 'react'
+import { IRootState, rootReducer } from '../reducers/RootReducer'
+interface Props {}
+
+const RootStateContext = React.createContext<ReducerResponse<IRootState> | null>(null)
+
+export const RootContext: React.FC<Props> = props => {
+  const fluent = useFluentReducer<IRootState>(rootReducer)
+  return (
+    <RootStateContext.Provider value={fluent}>
+      {props.children}
+    </RootStateContext.Provider>
+  )
+}
+export const useRootContext = () => {
+  return useContext(RootStateContext) as ReducerResponse<IRootState>
 }
 ```
