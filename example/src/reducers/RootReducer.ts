@@ -1,4 +1,4 @@
-import { FluentReducer } from 'fluent-reducer'
+import { FluentReducer, createReducerContext } from 'fluent-reducer'
 
 export interface IRootState {
   name: string
@@ -12,6 +12,8 @@ export const rootReducer = new FluentReducer<IRootState>(RootState, {
     console.log(state)
   }]
 })
+export const [RootStateContext, useRootContext] = createReducerContext<IRootState>(rootReducer)
+
 export const changeName = rootReducer.sync<string>('CHANGE_NAME', (state, name) => {
   state.name = name
 })

@@ -73,27 +73,23 @@ export const MyExample: React.FC = () => {
 }
 ```
 
-## TIPS
+## Helpers
 
-with ContextAPI
+### Create Context
 
-```./example/src/context/RootContext.tsx
-import { useFluentReducer, ReducerResponse } from 'fluent-reducer'
-import React, { useContext } from 'react'
-import { IRootState, rootReducer } from '../reducers/RootReducer'
-interface Props {}
+```
+const reducer = new FluentReducer<YOUR_STATE_TYPE>()
+const [ReducerContext, useReducerContext] = createReducerContext<YOUR_STATE_TYPE>(reducer)
+```
 
-const RootStateContext = React.createContext<ReducerResponse<IRootState> | null>(null)
+wrap your components in ReducerContext
+```
+<ReducerContext>
+  ...
+</ReducerContext>
+```
 
-export const RootContext: React.FC<Props> = props => {
-  const fluent = useFluentReducer<IRootState>(rootReducer)
-  return (
-    <RootStateContext.Provider value={fluent}>
-      {props.children}
-    </RootStateContext.Provider>
-  )
-}
-export const useRootContext = () => {
-  return useContext(RootStateContext) as ReducerResponse<IRootState>
-}
+call useReducerContext in your component
+```
+const [state, dispatch] = useReducerContext()
 ```

@@ -1,17 +1,17 @@
 import React from 'react';
 import './App.css';
-import { ChildContext } from './contexts/ChildContext'
+import { RootStateContext } from './reducers/RootReducer'
+import { ChildStateContext } from './reducers/ChildReducer'
 import { MyExample } from './MyExample'
-import { RootContext } from './contexts/RootContext'
 
 function App() {
   return (
     <div className="App">
-      <RootContext>
-        <ChildContext>
+      <RootStateContext>
+        <ChildStateContext>
           <MyExample />
-        </ChildContext>
-      </RootContext>
+        </ChildStateContext>
+      </RootStateContext>
     </div>
   );
 }

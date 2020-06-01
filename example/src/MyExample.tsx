@@ -1,8 +1,6 @@
 import React, { useCallback } from 'react'
-import { useChildContext } from './contexts/ChildContext'
-import { useRootContext } from './contexts/RootContext'
-import { syncName } from './reducers/ChildReducer'
-import { changeName } from './reducers/RootReducer'
+import { syncName, useChildContext } from './reducers/ChildReducer'
+import { changeName, useRootContext } from './reducers/RootReducer'
 
 export const MyExample: React.FC = () => {
   const [state, dispatch] = useRootContext()

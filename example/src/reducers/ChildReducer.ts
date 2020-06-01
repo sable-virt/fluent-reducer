@@ -1,4 +1,4 @@
-import { FluentReducer } from 'fluent-reducer'
+import { FluentReducer, createReducerContext } from 'fluent-reducer'
 import { rootReducer } from './RootReducer'
 
 export interface IChildState {
@@ -14,6 +14,7 @@ export const childReducer = new FluentReducer<IChildState>(ChildState, {
     console.log(state)
   }]
 })
+export const [ChildStateContext, useChildContext] = createReducerContext<IChildState>(childReducer)
 export const syncName = childReducer.async<void, string, void>('ASYNC_CHANGE_NAME', (_, dispatch, getState) => {
   console.log('root state', rootReducer.state)
   return rootReducer.state.name
