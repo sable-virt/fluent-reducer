@@ -1,6 +1,6 @@
 # fluent-reducer
 
-TypeSafe & Immutable useReducer
+TypeSafe & Immutable useReducer(No Redux Dependency)
 
 ## how to use
 
@@ -21,6 +21,7 @@ const RootState: IRootState = {
 ### 2. Create FluentReducer
 ```./example/src/reducers/RootReducers.ts
 export const rootReducer = new FluentReducer<IRootState>(RootState, {
+  prefix: 'ROOT_', // [optional] action name prefix
   verbose: true,
   middlewares: [(state) => {
     console.log(state)
@@ -30,7 +31,7 @@ export const rootReducer = new FluentReducer<IRootState>(RootState, {
 
 ### 3. Sync Action
 ```./example/src/reducers/RootReducers.ts
-export const changeName = rootReducer.sync('CHANGE_NAME', (state, name) => {
+export const changeName = rootReducer.sync<string>('CHANGE_NAME', (state, name) => {
   state.name = name
 })
 ```

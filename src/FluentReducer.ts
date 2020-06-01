@@ -15,11 +15,13 @@ export type IHandler<InS, P> = (
 export interface IFluentReducerOption<InS> {
   defaultHandler: IHandler<InS, IAction> | undefined
   middlewares: ((state: Readonly<InS>) => void)[]
+  prefix: string
   verbose: boolean
 }
 const DEFAULT_OPTION: IFluentReducerOption<any> = {
   defaultHandler: undefined,
   middlewares: [],
+  prefix: '',
   verbose: false
 }
 export class FluentReducer<InS> {
@@ -33,10 +35,10 @@ export class FluentReducer<InS> {
       if (this._option.verbose) {
         console.log(action)
       }
-      const result = handler ? handler(state, action) : state;
+      return handler ? handler(state, action) : state;
     }
   }
-  public reducer = (state: InS, action: any): Readonly<InS> => {
+  public reducer = (state: InS, action: IAction): Readonly<InS> => {
     const newState = produce(state, (draft) => {
       return this._exec(draft as InS, action)
     })
@@ -63,19 +65,19 @@ export class FluentReducer<InS> {
     )
   }
   async<Param=void, Result=void, Err=Error>(type: string, handler: IAsyncHandler<InS, Param, Result>, handlers: Partial<IAsyncHandlers<InS, Param, Result, Err>> = {}): (param: Param) => AsyncActionCreator<InS, Param, Result, Err> {
-    const started = this.sync<Param>(`${type}__STARTED`, (state, payload) => {
+    const started = this.sync<Param>(`${this._option.prefix + type}__STARTED`, (state, payload) => {
       if (handlers.started) {
         return handlers.started(state, payload)
       }
       return state
     })
-    const failed = this.sync<IAsyncFailed<Param, Err>>(`${type}__FAILED`, (state, result) => {
+    const failed = this.sync<IAsyncFailed<Param, Err>>(`${this._option.prefix + type}__FAILED`, (state, result) => {
       if (handlers.failed) {
         return handlers.failed(state, result)
       }
       return state
     })
-    const done = this.sync<IAsyncSucceeded<Param, Result>>(`${type}__DONE`, (state, result) => {
+    const done = this.sync<IAsyncSucceeded<Param, Result>>(`${this._option.prefix + type}__DONE`, (state, result) => {
       if (handlers.done) {
         return handlers.done(state, result)
       }
