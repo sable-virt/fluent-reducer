@@ -28,8 +28,12 @@ export class FluentReducer<InS> {
   private _handle: { [actionType: string]: IHandler<InS, any>; } = {}
   private _exec: (state: InS, action: IAction) => InS | any
   private _option:IFluentReducerOption<InS> = Object.assign({}, DEFAULT_OPTION)
+  private _state: InS
   constructor(public initialState: InS, op: Partial<IFluentReducerOption<InS>> = {}) {
     Object.assign(this._option, op)
+    this._state = produce<any, InS>({}, (draft) => {
+      Object.assign(draft, initialState)
+    })
     this._exec = (state: InS, action: IAction) => {
       const handler = this._handle[action.type] || this._option.defaultHandler;
       if (this._option.verbose) {
@@ -38,6 +42,12 @@ export class FluentReducer<InS> {
       return handler ? handler(state, action) : state;
     }
   }
+  public update(state: InS) {
+    this._state = state
+  }
+  get state(): Readonly<InS> {
+    return Object.freeze(this._state)
+  }
   public reducer = (state: InS, action: IAction): Readonly<InS> => {
     const newState = produce(state, (draft) => {
       return this._exec(draft as InS, action)
@@ -45,6 +55,7 @@ export class FluentReducer<InS> {
     this._option.middlewares.forEach(middleware => {
       middleware(newState)
     })
+    this._state = newState
     return Object.freeze(newState)
   }
   private _caseWithAction<P>(

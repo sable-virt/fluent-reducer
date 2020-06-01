@@ -1,19 +1,20 @@
 import { Dispatch } from 'react'
 import { AsyncActionCreator, IAction } from './AsyncActionCreator'
+import { FluentReducer } from './FluentReducer'
 
 export interface FluentDispatch<InS, P> {
   (action: IAction | AsyncActionCreator<InS, any, P, any>): Promise<P> | void
 }
 
 export class FluentDispatcher<InS> {
-  private _state: InS
   private _dispatcher: Dispatch<IAction>
-  update(state: InS, dispatcher: Dispatch<IAction>) {
-    this._state = state
+  private _reducer: FluentReducer<InS>
+  update(state: InS, dispatcher: Dispatch<IAction>, reducer: FluentReducer<InS>) {
     this._dispatcher = dispatcher
+    this._reducer = reducer
   }
   getState() {
-    return Object.freeze(this._state)
+    return this._reducer.state
   }
   dispatch<P = any>(action: IAction | AsyncActionCreator<InS, any, P, any>): Promise<P> | void {
     const dispatch = this._dispatcher
