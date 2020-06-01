@@ -5,10 +5,11 @@ export interface IFluentReducerOption<InS> {
     verbose: boolean;
 }
 export declare class FluentReducer<InS> {
+    initialState: InS;
     private _handle;
     private _exec;
     private _option;
-    constructor(op?: Partial<IFluentReducerOption<InS>>);
+    constructor(initialState: InS, op?: Partial<IFluentReducerOption<InS>>);
     reducer: (state: InS, action: any) => any;
     private _caseWithAction;
     sync<P = any>(type: string, handler: IHandler<InS, P>): IActionCreator<P>;

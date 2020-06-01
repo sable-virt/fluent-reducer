@@ -1,14 +1,17 @@
 import { useMemo, useReducer } from 'react'
+import { AsyncActionCreator, IAction } from './AsyncActionCreator'
 import { FluentDispatcher } from './FluentDispatcher'
 import { FluentReducer } from './index'
 
-export function useFluentReducer<InS>(reducer: FluentReducer<InS>, initialState: InS, initializer?: undefined) {
-  const [ state, dispatch ] = useReducer(reducer.reducer, initialState, initializer)
+export type ReducerResponse<InS> = [Readonly<InS>, DispatchFunction<InS>]
+export type DispatchFunction<InS> = (action: IAction | AsyncActionCreator<InS, any, any, any>) => Promise<any> | void
+export function useFluentReducer<InS>(reducer: FluentReducer<InS>, initializer?: undefined): ReducerResponse<InS> {
+  const [ state, dispatch ] = useReducer(reducer.reducer, reducer.initialState, initializer)
   const dispatcher = useMemo(() => new FluentDispatcher<InS>(), [])
   dispatcher.update(state, dispatch)
   const fluentDispatch = dispatcher.dispatch.bind(dispatcher)
   return [
-    state,
+    Object.freeze(state),
     fluentDispatch
   ]
 }
