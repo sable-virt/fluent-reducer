@@ -11,7 +11,7 @@ export function useFluentReducer<InS>(reducer: FluentReducer<InS>, initializer?:
   dispatcher.update(state, dispatch)
   const fluentDispatch = dispatcher.dispatch.bind(dispatcher)
   return [
-    Object.freeze(state),
+    state,
     fluentDispatch
   ]
 }

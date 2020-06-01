@@ -14,10 +14,12 @@ export type IHandler<InS, P> = (
 
 export interface IFluentReducerOption<InS> {
   defaultHandler: IHandler<InS, IAction> | undefined
+  middlewares: ((state: Readonly<InS>) => void)[]
   verbose: boolean
 }
 const DEFAULT_OPTION: IFluentReducerOption<any> = {
   defaultHandler: undefined,
+  middlewares: [],
   verbose: false
 }
 export class FluentReducer<InS> {
@@ -31,13 +33,17 @@ export class FluentReducer<InS> {
       if (this._option.verbose) {
         console.log(action)
       }
-      return handler ? handler(state, action) : state;
+      const result = handler ? handler(state, action) : state;
     }
   }
-  public reducer = (state: InS, action: any) => {
-    return produce(state, (draft) => {
+  public reducer = (state: InS, action: any): Readonly<InS> => {
+    const newState = produce(state, (draft) => {
       return this._exec(draft as InS, action)
     })
+    this._option.middlewares.forEach(middleware => {
+      middleware(newState)
+    })
+    return Object.freeze(newState)
   }
   private _caseWithAction<P>(
     type: string,
@@ -56,7 +62,7 @@ export class FluentReducer<InS> {
       handler(state, action.payload)
     )
   }
-  async<Param, Result, Err>(type: string, handler: IAsyncHandler<InS, Param, Result>, handlers: Partial<IAsyncHandlers<InS, Param, Result, Err>> = {}): (param: Param) => AsyncActionCreator<InS, Param, Result, Err> {
+  async<Param, Result=any, Err=Error>(type: string, handler: IAsyncHandler<InS, Param, Result>, handlers: Partial<IAsyncHandlers<InS, Param, Result, Err>> = {}): (param: Param) => AsyncActionCreator<InS, Param, Result, Err> {
     const started = this.sync<Param>(`${type}__STARTED`, (state, payload) => {
       if (handlers.started) {
         return handlers.started(state, payload)
