@@ -57,12 +57,12 @@ export class FluentReducer<InS> {
       }
     }
   }
-  sync<P=any>(type: string, handler: IHandler<InS, P>): IActionCreator<P> {
+  sync<P=void>(type: string, handler: IHandler<InS, P>): IActionCreator<P> {
     return this._caseWithAction<P>(type, (state: InS, action: IAction<P>) =>
       handler(state, action.payload)
     )
   }
-  async<Param, Result=any, Err=Error>(type: string, handler: IAsyncHandler<InS, Param, Result>, handlers: Partial<IAsyncHandlers<InS, Param, Result, Err>> = {}): (param: Param) => AsyncActionCreator<InS, Param, Result, Err> {
+  async<Param=void, Result=void, Err=Error>(type: string, handler: IAsyncHandler<InS, Param, Result>, handlers: Partial<IAsyncHandlers<InS, Param, Result, Err>> = {}): (param: Param) => AsyncActionCreator<InS, Param, Result, Err> {
     const started = this.sync<Param>(`${type}__STARTED`, (state, payload) => {
       if (handlers.started) {
         return handlers.started(state, payload)
