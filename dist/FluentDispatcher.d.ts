@@ -7,7 +7,7 @@ export interface FluentDispatch<InS, P> {
 export declare class FluentDispatcher<InS> {
     private _dispatcher;
     private _reducer;
-    update(state: InS, dispatcher: Dispatch<IAction>, reducer: FluentReducer<InS>): void;
+    update(dispatcher: Dispatch<IAction>, reducer: FluentReducer<InS>): void;
     getState(): Readonly<InS>;
     dispatch<P = any>(action: IAction | AsyncActionCreator<InS, any, P, any>): Promise<P> | void;
 }

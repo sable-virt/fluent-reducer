@@ -13,7 +13,6 @@ export declare class FluentReducer<InS> {
     private _option;
     private _state;
     constructor(initialState: InS, op?: Partial<IFluentReducerOption<InS>>);
-    update(state: InS): void;
     get state(): Readonly<InS>;
     reducer: (state: InS, action: IAction) => Readonly<InS>;
     private _caseWithAction;
