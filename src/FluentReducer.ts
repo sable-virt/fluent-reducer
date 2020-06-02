@@ -71,31 +71,31 @@ export class FluentReducer<InS> {
     }
   }
   sync<P=void>(type: string, handler: IHandler<InS, P>): IActionCreator<P> {
-    return this._caseWithAction<P>(type, (state: InS, action: IAction<P>) =>
+    return this._caseWithAction<P>(this._option.prefix + type, (state: InS, action: IAction<P>) =>
       handler(state, action.payload)
     )
   }
   async<Param=void, Result=void, Err=Error>(type: string, handler: IAsyncHandler<InS, Param, Result>, handlers: Partial<IAsyncHandlers<InS, Param, Result, Err>> = {}): (param: Param) => AsyncActionCreator<InS, Param, Result, Err> {
-    const started = this.sync<Param>(`${this._option.prefix + type}__STARTED`, (state, payload) => {
+    const started = this.sync<Param>(`${type}__STARTED`, (state, payload) => {
       if (handlers.started) {
         return handlers.started(state, payload)
       }
       return state
     })
-    const failed = this.sync<IAsyncFailed<Param, Err>>(`${this._option.prefix + type}__FAILED`, (state, result) => {
+    const failed = this.sync<IAsyncFailed<Param, Err>>(`${type}__FAILED`, (state, result) => {
       if (handlers.failed) {
         return handlers.failed(state, result)
       }
       return state
     })
-    const done = this.sync<IAsyncSucceeded<Param, Result>>(`${this._option.prefix + type}__DONE`, (state, result) => {
+    const done = this.sync<IAsyncSucceeded<Param, Result>>(`${type}__DONE`, (state, result) => {
       if (handlers.done) {
         return handlers.done(state, result)
       }
       return state
     })
     return (param: Param): AsyncActionCreator<InS, Param, Result, Err> => new AsyncActionCreator(
-      type,
+      this._option.prefix + type,
       param,
       handler,
       started,
