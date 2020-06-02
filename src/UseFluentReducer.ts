@@ -8,7 +8,7 @@ export type DispatchFunction<InS> = (action: IAction | AsyncActionCreator<InS, a
 export function useFluentReducer<InS>(reducer: FluentReducer<InS>, initializer?: undefined): ReducerResponse<InS> {
   const [ state, dispatch ] = useReducer(reducer.reducer, reducer.state, initializer)
   const dispatcher = useMemo(() => new FluentDispatcher<InS>(), [])
-  dispatcher.update(state, dispatch, reducer)
+  dispatcher.update(dispatch, reducer)
   const fluentDispatch = dispatcher.dispatch.bind(dispatcher)
   return [
     state,

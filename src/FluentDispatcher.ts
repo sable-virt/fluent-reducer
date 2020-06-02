@@ -9,7 +9,7 @@ export interface FluentDispatch<InS, P> {
 export class FluentDispatcher<InS> {
   private _dispatcher: Dispatch<IAction>
   private _reducer: FluentReducer<InS>
-  update(state: InS, dispatcher: Dispatch<IAction>, reducer: FluentReducer<InS>) {
+  update(dispatcher: Dispatch<IAction>, reducer: FluentReducer<InS>) {
     this._dispatcher = dispatcher
     this._reducer = reducer
   }

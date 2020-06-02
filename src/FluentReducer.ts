@@ -42,9 +42,6 @@ export class FluentReducer<InS> {
       return handler ? handler(state, action) : state;
     }
   }
-  public update(state: InS) {
-    this._state = state
-  }
   get state(): Readonly<InS> {
     return Object.freeze(this._state)
   }
