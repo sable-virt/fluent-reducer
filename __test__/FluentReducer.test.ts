@@ -8,7 +8,7 @@ const DEFAULT_STATE: IRootState = {
   name: 'test',
   age: 20
 }
-test('basic', () => {
+test('defined', () => {
   const reducer = new FluentReducer<IRootState>(DEFAULT_STATE)
   expect(reducer).toBeDefined()
 })
@@ -87,5 +87,55 @@ test('prefix', () => {
   expect(action.done({params: PARAM, result: 0})).toEqual({
     type: 'MY_PREFIX__TEST_ASYNC__DONE',
     payload: {params: PARAM, result: 0}
+  })
+})
+test('sync reducer', () => {
+  const reducer = new FluentReducer<IRootState>(DEFAULT_STATE)
+  const stringAction = reducer.sync<string>('TEST', (state, newName) => {
+    state.name = newName
+  })
+  reducer.reducer(reducer.state, stringAction('sable'))
+  expect(reducer.state).toEqual({
+    name: 'sable',
+    age: 20,
+  })
+})
+test('async reducer', () => {
+  const reducer = new FluentReducer<IRootState>(DEFAULT_STATE)
+  const stringAction = reducer.async<string, number>('TEST', (param) => {
+    return 21
+  }, {
+    started(state, params) {
+      expect(params).toBe('sable')
+      state.name = 'started'
+    },
+    failed(state, { params, error }) {
+      expect(params).toBe('sable')
+      expect(error).toEqual(new Error())
+      state.name = 'failed'
+    },
+    done(state, { params, result}) {
+      expect(params).toBe('sable')
+      expect(result).toBe(21)
+      state.name = params
+      state.age = result
+    }
+  })
+  reducer.reducer(reducer.state, stringAction('sable').started('sable'))
+  expect(reducer.state).toEqual({
+    name: 'started',
+    age: 20,
+  })
+
+  reducer.reducer(reducer.state, stringAction('sable').failed({ params: 'sable', error: new Error() }))
+  expect(reducer.state).toEqual({
+    name: 'failed',
+    age: 20,
+  })
+
+  reducer.reducer(reducer.state, stringAction('sable').done({ params: 'sable', result: 21 }))
+  expect(reducer.state).toEqual({
+    name: 'sable',
+    age: 21,
   })
 })
