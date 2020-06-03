@@ -2,8 +2,8 @@ import { Dispatch } from 'react'
 import { AsyncActionCreator, IAction } from './AsyncActionCreator'
 import { FluentReducer } from './FluentReducer'
 
-export interface FluentDispatch<InS, P> {
-  (action: IAction | AsyncActionCreator<InS, any, P, any>): Promise<P> | void
+export interface FluentDispatch<InS, P, R, E> {
+  (action: IAction | AsyncActionCreator<InS, P, R, E>): Promise<R> | R | void
 }
 
 export class FluentDispatcher<InS> {
@@ -16,10 +16,10 @@ export class FluentDispatcher<InS> {
   getState() {
     return this._reducer.state
   }
-  dispatch<P = any>(action: IAction | AsyncActionCreator<InS, any, P, any>): Promise<P> | void {
+  dispatch<P = any, R = any>(action: IAction | AsyncActionCreator<InS, P, R, any>): Promise<R> | void {
     const dispatch = this._dispatcher
     if (action instanceof AsyncActionCreator) {
-      return new Promise<P>(async(resolve, reject) => {
+      return new Promise<R>(async(resolve, reject) => {
         try {
           dispatch(action.started(action.param))
           const result = await action.handler(action.param, this.dispatch.bind(this), this.getState.bind(this))

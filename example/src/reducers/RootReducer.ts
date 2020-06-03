@@ -17,3 +17,12 @@ export const [RootStateContext, useRootContext] = createReducerContext<IRootStat
 export const changeName = rootReducer.sync<string>('CHANGE_NAME', (state, name) => {
   state.name = name
 })
+
+export const asyncChangeName = rootReducer.async<number, number>('ASYNC_CHANGE_NAME', (name, dispatch) => {
+  dispatch(changeName('test'))
+  return 0
+})
+export const asyncChangeName2 = rootReducer.async<string, string>('ASYNC_CHANGE_NAME', async(name, dispatch) => {
+  const num = await dispatch(asyncChangeName(222))
+  return String(num)
+})

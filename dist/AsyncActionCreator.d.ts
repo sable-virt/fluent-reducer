@@ -20,7 +20,7 @@ export interface IActionCreator<P> {
     (payload: P): IAction<P>;
 }
 export interface IAsyncHandler<InS, P, R> {
-    (params: P, dispatch: FluentDispatch<InS, P>, getState: () => Readonly<InS>): Promise<R> | R;
+    (params: P, dispatch: FluentDispatch<InS, any, any, any>, getState: () => Readonly<InS>): Promise<R> | R;
 }
 export declare class AsyncActionCreator<S, P, R, E> {
     type: string;

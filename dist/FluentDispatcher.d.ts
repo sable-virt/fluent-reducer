@@ -1,13 +1,13 @@
 import { Dispatch } from 'react';
 import { AsyncActionCreator, IAction } from './AsyncActionCreator';
 import { FluentReducer } from './FluentReducer';
-export interface FluentDispatch<InS, P> {
-    (action: IAction | AsyncActionCreator<InS, any, P, any>): Promise<P> | void;
+export interface FluentDispatch<InS, P, R, E> {
+    (action: IAction | AsyncActionCreator<InS, P, R, E>): Promise<R> | R | void;
 }
 export declare class FluentDispatcher<InS> {
     private _dispatcher;
     private _reducer;
     update(dispatcher: Dispatch<IAction>, reducer: FluentReducer<InS>): void;
     getState(): Readonly<InS>;
-    dispatch<P = any>(action: IAction | AsyncActionCreator<InS, any, P, any>): Promise<P> | void;
+    dispatch<P = any, R = any>(action: IAction | AsyncActionCreator<InS, P, R, any>): Promise<R> | void;
 }
