@@ -13,7 +13,7 @@ export type IHandler<InS, P> = (
 ) => void;
 
 export interface IFluentReducerOption<InS> {
-  defaultHandler: IHandler<InS, IAction> | undefined
+  defaultHandler: IHandler<InS, IAction<any>> | undefined
   middlewares: ((state: Readonly<InS>) => void)[]
   prefix: string
   verbose: boolean
@@ -24,17 +24,17 @@ const DEFAULT_OPTION: IFluentReducerOption<any> = {
   prefix: '',
   verbose: false
 }
-export class FluentReducer<InS> {
-  private _handle: { [actionType: string]: IHandler<InS, any>; } = {}
-  private _exec: (state: InS, action: IAction) => InS | any
-  private _option:IFluentReducerOption<InS> = Object.assign({}, DEFAULT_OPTION)
-  private _state: InS
+export class FluentReducer<ID extends string, InS> {
+  protected _option: IFluentReducerOption<InS> = Object.assign({}, DEFAULT_OPTION)
+  protected _state: InS
+  protected _handle: { [actionType: string]: IHandler<InS, any>; } = {}
+  protected _exec: (state: InS, action: IAction<ID>) => InS | any
   constructor(public initialState: InS, op: Partial<IFluentReducerOption<InS>> = {}) {
     Object.assign(this._option, op)
     this._state = produce<any, InS>({}, (draft) => {
       Object.assign(draft, initialState)
     })
-    this._exec = (state: InS, action: IAction) => {
+    this._exec = (state: InS, action: IAction<ID, InS>) => {
       const handler = this._handle[action.type] || this._option.defaultHandler;
       if (this._option.verbose) {
         console.log(action)
@@ -42,10 +42,22 @@ export class FluentReducer<InS> {
       return handler ? handler(state, action) : state;
     }
   }
-  get state(): Readonly<InS> {
+  protected _caseWithAction<P>(
+    type: string,
+    handler: IHandler<InS, IAction<ID, P>>,
+  ): (payload: P) => IAction<ID, P> {
+    this._handle[type] = handler;
+    return (payload: P): IAction<ID, P> => {
+      return {
+        type,
+        payload
+      }
+    }
+  }
+  public getState(): Readonly<InS> {
     return Object.freeze(this._state)
   }
-  public reducer = (state: InS, action: IAction): Readonly<InS> => {
+  public reducer = (state: InS, action: IAction<ID>): Readonly<InS> => {
     const newState = produce(state, (draft) => {
       return this._exec(draft as InS, action)
     })
@@ -55,24 +67,12 @@ export class FluentReducer<InS> {
     this._state = newState
     return Object.freeze(newState)
   }
-  private _caseWithAction<P>(
-    type: string,
-    handler: IHandler<InS, IAction<P>>,
-  ): (payload: P) => IAction<P> {
-    this._handle[type] = handler;
-    return (payload: P): IAction<P> => {
-      return {
-        type,
-        payload
-      }
-    }
-  }
-  sync<P=void>(type: string, handler: IHandler<InS, P>): IActionCreator<P> {
-    return this._caseWithAction<P>(this._option.prefix + type, (state: InS, action: IAction<P>) =>
+  public sync<P=void>(type: string, handler: IHandler<InS, P>): IActionCreator<ID, P> {
+    return this._caseWithAction<P>(this._option.prefix + type, (state: InS, action: IAction<ID, P>) =>
       handler(state, action.payload)
     )
   }
-  async<Param=void, Result=void, Err=Error>(type: string, handler: IAsyncHandler<InS, Param, Result>, handlers: Partial<IAsyncHandlers<InS, Param, Result, Err>> = {}): (param: Param) => AsyncActionCreator<InS, Param, Result, Err> {
+  public async<Param=void, Result=void, Err=Error>(type: string, handler: IAsyncHandler<ID, InS, Param, Result>, handlers: Partial<IAsyncHandlers<InS, Param, Result, Err>> = {}): (param: Param) => AsyncActionCreator<ID, InS, Param, Result, Err> {
     const started = this.sync<Param>(`${type}__STARTED`, (state, payload) => {
       if (handlers.started) {
         return handlers.started(state, payload)
@@ -91,7 +91,7 @@ export class FluentReducer<InS> {
       }
       return state
     })
-    return (param: Param): AsyncActionCreator<InS, Param, Result, Err> => new AsyncActionCreator(
+    return (param: Param): AsyncActionCreator<ID, InS, Param, Result, Err> => new AsyncActionCreator(
       this._option.prefix + type,
       param,
       handler,

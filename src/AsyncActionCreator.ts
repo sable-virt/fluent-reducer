@@ -1,6 +1,5 @@
-import { FluentDispatch } from './FluentDispatcher'
-
-export interface IAction<P=any> {
+export interface IAction<T extends string, P=any> {
+  _?: T
   type: string
   payload: P
 }
@@ -17,19 +16,22 @@ export interface IAsyncHandlers<S, P, R, E> {
   failed: (state: S, result: IAsyncFailed<P, E>) => void
   done: (state: S, result: IAsyncSucceeded<P, R>) => void
 }
-export interface IActionCreator<P> {
-  (payload: P): IAction<P>
+export interface IActionCreator<T extends string, P> {
+  _?: T
+  (payload: P): IAction<T, P>
 }
-export interface IAsyncHandler<InS, P, R> {
-  (params: P, dispatch: FluentDispatch<InS, any, any, any>, getState: () => Readonly<InS>): Promise<R> | R
+export type TypeDispatch<T extends string, InS> = (action: IAction<T> | AsyncActionCreator<T, InS, any, any, any>) => Promise<any> | void
+export interface IAsyncHandler<T extends string, InS, P, R> {
+  _?: T
+  (params: P, dispatch: TypeDispatch<T, InS>, getState: () => Readonly<InS>): Promise<R> | R
 }
-export class AsyncActionCreator<S, P, R, E> {
+export class AsyncActionCreator<T extends string, S, P, R, E> {
   constructor(
     public type: string,
     public param: P,
-    public handler: IAsyncHandler<S, P, R>,
-    public started: IActionCreator<P>,
-    public failed: IActionCreator<IAsyncFailed<P, E>>,
-    public done: IActionCreator<IAsyncSucceeded<P, R>>,
+    public handler: IAsyncHandler<T, S, P, R>,
+    public started: IActionCreator<T, P>,
+    public failed: IActionCreator<T, IAsyncFailed<P, E>>,
+    public done: IActionCreator<T, IAsyncSucceeded<P, R>>,
   ) {}
 }

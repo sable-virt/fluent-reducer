@@ -1,5 +1,5 @@
 import React, { useCallback } from 'react'
-import { syncName, useChildContext } from './reducers/ChildReducer'
+import { update, useChildContext } from './reducers/ChildReducer'
 import { changeName, useRootContext } from './reducers/RootReducer'
 
 export const MyExample: React.FC = () => {
@@ -8,7 +8,10 @@ export const MyExample: React.FC = () => {
   const _handleOnClick = useCallback(() => {
     dispatch(changeName(Date.now().toString()))
     window.setTimeout(() => {
-      childDispatch(syncName())
+      // childDispatch(syncName())
+      const upaction = update('hoge')
+      // dispatch(upaction)
+      childDispatch(upaction)
     }, 1000)
   }, [dispatch, childDispatch])
   return (
