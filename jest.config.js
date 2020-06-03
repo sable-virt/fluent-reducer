@@ -1,8 +1,8 @@
 module.exports = {
   preset: 'ts-jest',
-  testEnvironment: 'node',
+  testEnvironment: 'jsdom',
   rootDir: "./__test__",
   moduleNameMapper: {
-    "react$": "<rootDir>/__mocks__/reactMock.js",
+    "^react$": "<rootDir>/../node_modules/react/umd/react.development.js",
   }
 }

@@ -9,11 +9,11 @@ const DEFAULT_STATE: IRootState = {
   age: 20
 }
 test('defined', () => {
-  const reducer = new FluentReducer<IRootState>(DEFAULT_STATE)
+  const reducer = new FluentReducer<'test',IRootState>(DEFAULT_STATE)
   expect(reducer).toBeDefined()
 })
 test('sync', () => {
-  const reducer = new FluentReducer<IRootState>(DEFAULT_STATE)
+  const reducer = new FluentReducer<'test',IRootState>(DEFAULT_STATE)
   const stringAction = reducer.sync<string>('TEST', (state) => {})
   expect(stringAction('test')).toEqual({
     type: 'TEST',
@@ -26,7 +26,7 @@ test('sync', () => {
   })
 })
 test('async', () => {
-  const reducer = new FluentReducer<IRootState>(DEFAULT_STATE)
+  const reducer = new FluentReducer<'test', IRootState>(DEFAULT_STATE)
   const handler = () => { return 0 }
   const NAME = 'ASYNC_TEST'
   const PARAM = 'hoge'
@@ -63,7 +63,7 @@ test('async', () => {
   })
 })
 test('prefix', () => {
-  const reducer = new FluentReducer<IRootState>(DEFAULT_STATE, {
+  const reducer = new FluentReducer<'test', IRootState>(DEFAULT_STATE, {
     prefix: 'MY_PREFIX__'
   })
   const stringAction = reducer.sync<string>('TEST', (state) => {})
@@ -90,18 +90,18 @@ test('prefix', () => {
   })
 })
 test('sync reducer', () => {
-  const reducer = new FluentReducer<IRootState>(DEFAULT_STATE)
+  const reducer = new FluentReducer<'test', IRootState>(DEFAULT_STATE)
   const stringAction = reducer.sync<string>('TEST', (state, newName) => {
     state.name = newName
   })
-  reducer.reducer(reducer.state, stringAction('sable'))
-  expect(reducer.state).toEqual({
+  reducer.reducer(reducer.getState(), stringAction('sable'))
+  expect(reducer.getState()).toEqual({
     name: 'sable',
     age: 20,
   })
 })
 test('async reducer', () => {
-  const reducer = new FluentReducer<IRootState>(DEFAULT_STATE)
+  const reducer = new FluentReducer<'test', IRootState>(DEFAULT_STATE)
   const stringAction = reducer.async<string, number>('TEST', (param) => {
     return 21
   }, {
@@ -121,20 +121,20 @@ test('async reducer', () => {
       state.age = result
     }
   })
-  reducer.reducer(reducer.state, stringAction('sable').started('sable'))
-  expect(reducer.state).toEqual({
+  reducer.reducer(reducer.getState(), stringAction('sable').started('sable'))
+  expect(reducer.getState()).toEqual({
     name: 'started',
     age: 20,
   })
 
-  reducer.reducer(reducer.state, stringAction('sable').failed({ params: 'sable', error: new Error() }))
-  expect(reducer.state).toEqual({
+  reducer.reducer(reducer.getState(), stringAction('sable').failed({ params: 'sable', error: new Error() }))
+  expect(reducer.getState()).toEqual({
     name: 'failed',
     age: 20,
   })
 
-  reducer.reducer(reducer.state, stringAction('sable').done({ params: 'sable', result: 21 }))
-  expect(reducer.state).toEqual({
+  reducer.reducer(reducer.getState(), stringAction('sable').done({ params: 'sable', result: 21 }))
+  expect(reducer.getState()).toEqual({
     name: 'sable',
     age: 21,
   })

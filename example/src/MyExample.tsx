@@ -10,7 +10,7 @@ export const MyExample: React.FC = () => {
     window.setTimeout(() => {
       // childDispatch(syncName())
       const upaction = update('hoge')
-      // dispatch(upaction)
+      // dispatch(upaction) // type error
       childDispatch(upaction)
     }, 1000)
   }, [dispatch, childDispatch])

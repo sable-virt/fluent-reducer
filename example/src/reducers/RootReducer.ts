@@ -12,7 +12,7 @@ export const rootReducer = new ReactFluentReducer<'root', IRootState>(RootState,
     console.log(state)
   }]
 })
-export const [RootStateContext, useRootContext] = rootReducer.createReducerContext(rootReducer)
+export const [RootStateContext, useRootContext] = rootReducer.createReducerContext()
 
 export const changeName = rootReducer.sync<string>('CHANGE_NAME', (state, name) => {
   state.name = name

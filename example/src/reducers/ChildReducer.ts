@@ -15,7 +15,7 @@ export const childReducer = new ReactFluentReducer<'child', IChildState>(ChildSt
     console.log(state)
   }]
 })
-export const [ChildStateContext, useChildContext] = childReducer.createReducerContext(childReducer)
+export const [ChildStateContext, useChildContext] = childReducer.createReducerContext()
 export const update = childReducer.sync<string>('UPDATE', (state, name) => {
   state.name = name
 })
