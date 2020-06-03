@@ -1,12 +1,15 @@
 import React, { useCallback } from 'react'
 import { update, useChildContext } from './reducers/ChildReducer'
-import { changeName, useRootContext } from './reducers/RootReducer'
+import { asyncChangeName, changeName, useRootContext } from './reducers/RootReducer'
 
 export const MyExample: React.FC = () => {
   const [state, dispatch] = useRootContext()
   const [childState, childDispatch] = useChildContext()
   const _handleOnClick = useCallback(() => {
     dispatch(changeName(Date.now().toString()))
+    dispatch(asyncChangeName(2)).then(() => {
+
+    })
     window.setTimeout(() => {
       // childDispatch(syncName())
       const upaction = update('hoge')

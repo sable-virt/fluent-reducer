@@ -21,7 +21,7 @@ export interface IActionCreator<T extends string, P> {
   (payload: P): IAction<T, P>
 }
 export interface TypeDispatch<T extends string, InS> {
-  <R=void>(action: IAction<T>): R
+  (action: IAction<T>): void
   <R=any>(action: AsyncActionCreator<T, InS, any, R, any>): Promise<R>
 }
 export interface IAsyncHandler<T extends string, InS, P, R> {

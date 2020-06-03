@@ -20,7 +20,10 @@ export interface IActionCreator<T extends string, P> {
     _?: T;
     (payload: P): IAction<T, P>;
 }
-export declare type TypeDispatch<T extends string, InS> = (action: IAction<T> | AsyncActionCreator<T, InS, any, any, any>) => Promise<any> | void;
+export interface TypeDispatch<T extends string, InS> {
+    (action: IAction<T>): void;
+    <R = any>(action: AsyncActionCreator<T, InS, any, R, any>): Promise<R>;
+}
 export interface IAsyncHandler<T extends string, InS, P, R> {
     _?: T;
     (params: P, dispatch: TypeDispatch<T, InS>, getState: () => Readonly<InS>): Promise<R> | R;

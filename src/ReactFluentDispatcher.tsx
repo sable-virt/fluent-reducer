@@ -8,7 +8,9 @@ export class ReactFluentDispatcher<T extends string, InS> {
     this._dispatcher = _dispatcher
   }
   constructor(private _reducer: ReactFluentReducer<T, InS>) {}
-  public dispatch(action: IAction<T> | AsyncActionCreator<T, InS, any, any, any>): Promise<any> | void {
+  public dispatch(action: IAction<T>): void;
+  public dispatch<R=any>(action: AsyncActionCreator<T, InS, any, R, any>): Promise<R>
+  public dispatch<R=any>(action: IAction<T> | AsyncActionCreator<T, InS, any, R, any>): Promise<R> | void {
     const dispatch = this._dispatcher
     if (!dispatch) throw new Error('undefined dispatcher')
     if (action instanceof AsyncActionCreator) {

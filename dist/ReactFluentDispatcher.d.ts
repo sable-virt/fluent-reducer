@@ -6,5 +6,6 @@ export declare class ReactFluentDispatcher<T extends string, InS> {
     private _dispatcher;
     set dispatcher(_dispatcher: Dispatch<IAction<T>>);
     constructor(_reducer: ReactFluentReducer<T, InS>);
-    dispatch(action: IAction<T> | AsyncActionCreator<T, InS, any, any, any>): Promise<any> | void;
+    dispatch(action: IAction<T>): void;
+    dispatch<R = any>(action: AsyncActionCreator<T, InS, any, R, any>): Promise<R>;
 }
