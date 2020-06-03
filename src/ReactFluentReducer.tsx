@@ -1,4 +1,4 @@
-import React, { createContext, Dispatch, useContext, useReducer } from 'react'
+import React, { createContext, Dispatch, useContext, useMemo, useReducer } from 'react'
 import { IAction, TypeDispatch } from './AsyncActionCreator'
 import { FluentReducer } from './FluentReducer'
 import { ReactFluentDispatcher } from './ReactFluentDispatcher'
@@ -28,8 +28,10 @@ export class ReactFluentReducer<T extends string, InS> extends FluentReducer<T, 
   }
   public useFluentReducer(initializer?: undefined): [InS, TypeDispatch<T, InS>] {
     const [ state, dispatch ] = useReducer(this.reducer, this.initialState, initializer)
-    this._updateDispatcher(dispatch)
-    const fluentDispatch: TypeDispatch<T, InS> = this._dispatcher.dispatch.bind(this._dispatcher)
+    const fluentDispatch: TypeDispatch<T, InS> = useMemo(() => {
+      this._updateDispatcher(dispatch)
+      return this._dispatcher.dispatch.bind(this._dispatcher)
+    }, [dispatch])
     return [
       state,
       fluentDispatch
