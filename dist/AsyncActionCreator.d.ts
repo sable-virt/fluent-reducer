@@ -1,3 +1,4 @@
+import { Draft } from 'immer';
 export interface IAction<T extends string, P = any> {
     _?: T;
     type: string;
@@ -12,9 +13,9 @@ export interface IAsyncSucceeded<P, R> {
     result: R;
 }
 export interface IAsyncHandlers<S, P, R, E> {
-    started: (state: S, params: P) => void;
-    failed: (state: S, result: IAsyncFailed<P, E>) => void;
-    done: (state: S, result: IAsyncSucceeded<P, R>) => void;
+    started: (state: Draft<S>, params: P) => void;
+    failed: (state: Draft<S>, result: IAsyncFailed<P, E>) => void;
+    done: (state: Draft<S>, result: IAsyncSucceeded<P, R>) => void;
 }
 export interface IActionCreator<T extends string, P> {
     _?: T;

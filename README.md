@@ -1,15 +1,17 @@
 # fluent-reducer
 
-TypeSafe & Immutable useReducer(No Redux Dependency)
+Easy & TypeSafe & Immutable reducer(No Redux Dependency)
 
-## how to use
+Storybook https://sable-virt.github.io/fluent-reducer/
+
+## How to use
 
 ```
 npm i -S fluent-reducer immer react
 ```
 
 ### 1. Define State Object
-```./example/src/reducers/RootReducers.ts
+```
 export interface IRootState {
   name: string
 }
@@ -19,18 +21,20 @@ const RootState: IRootState = {
 ```
 
 ### 2. Create FluentReducer
-```./example/src/reducers/RootReducers.ts
-export const rootReducer = new FluentReducer<IRootState>(RootState, {
+```
+// 'root' is unique ID
+export const rootReducer = new ReactFluentReducer<'root', IRootState>(RootState, {
   prefix: 'ROOT_', // [optional] action name prefix
   verbose: true,
-  middlewares: [(state) => {
-    console.log(state)
+  middlewares: [(state, action) => {
+    // this state can edit. not plane object, so if you save state like localstorage, use subscribe
+    console.log(state, action)
   }]
 })
 ```
 
 ### 3. Sync Action
-```./example/src/reducers/RootReducers.ts
+```
 export const changeName = rootReducer.sync<string>('CHANGE_NAME', (state, name) => {
   state.name = name
 })
@@ -45,13 +49,16 @@ const asyncChangeState = reducer.async<string, string, Error>('ASYNC_CHANGE_NAME
     }, 3000)
   })
 }, {
+  // before promise action
   started(state, params) {
     console.log('started', params)
     state.state = 'started'
   },
+  // promise rejected action
   failed(state, { error }) {
     console.error(error)
   },
+  // promise resolved action
   done(state, { result }) {
     state.name = result
     console.log('done')
@@ -61,10 +68,11 @@ const asyncChangeState = reducer.async<string, string, Error>('ASYNC_CHANGE_NAME
 
 ### 5. hooks
 
-```./example/src/MyExample.tsx
+```
 export const MyExample: React.FC = () => {
-  const [state, dispatch] = useRootContext()
+  const [state, dispatch] = rootReducer.useFluentReducer()
   const _handleOnClick = useCallback(() => {
+    // execute changeName action
     dispatch(changeName(Date.now().toString()))
   }, [dispatch])
   return (
@@ -73,23 +81,11 @@ export const MyExample: React.FC = () => {
 }
 ```
 
-## Helpers
-
-### Create Context
+### 6. subscribe/unsubscribe
 
 ```
-const reducer = new FluentReducer<YOUR_STATE_TYPE>()
-const [ReducerContext, useReducerContext] = createReducerContext<YOUR_STATE_TYPE>(reducer)
-```
-
-wrap your components in ReducerContext
-```
-<ReducerContext>
-  ...
-</ReducerContext>
-```
-
-call useReducerContext in your component
-```
-const [state, dispatch] = useReducerContext()
+rootReducer.subscribe((state, action) => {
+  // this state is readonly. if you want to update state, use middlewares option.
+  console.log(state, action)
+})
 ```
