@@ -1,5 +1,5 @@
 import React, { useCallback, useMemo } from 'react'
-import { ReactFluentReducer } from '../src'
+import { ReactFluentReducer } from '../src/react'
 
 export default {
   title: 'Middleware',

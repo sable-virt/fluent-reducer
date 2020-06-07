@@ -2,3 +2,9 @@
 __test__
 src
 dist
+stories
+.babelrc
+.jest.config.js
+tsconfig.json
+webpack.config.js
+.idea

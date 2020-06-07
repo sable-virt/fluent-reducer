@@ -62,33 +62,6 @@ test('async', () => {
     }
   })
 })
-test('prefix', () => {
-  const reducer = new FluentReducer<'test', IRootState>(DEFAULT_STATE, {
-    prefix: 'MY_PREFIX__'
-  })
-  const stringAction = reducer.sync<string>('TEST', (state) => {})
-  expect(stringAction('test')).toEqual({
-    type: 'MY_PREFIX__TEST',
-    payload: 'test'
-  })
-
-  const asyncAction = reducer.async<string, number>('TEST_ASYNC', (state) => { return 0 })
-  const PARAM = 'param'
-  const action = asyncAction(PARAM)
-  expect(action.type).toBe('MY_PREFIX__TEST_ASYNC')
-  expect(action.started(PARAM)).toEqual({
-    type: 'MY_PREFIX__TEST_ASYNC__STARTED',
-    payload: PARAM
-  })
-  expect(action.failed({ params: PARAM, error: new Error()})).toEqual({
-    type: 'MY_PREFIX__TEST_ASYNC__FAILED',
-    payload: { params: PARAM, error: new Error()}
-  })
-  expect(action.done({params: PARAM, result: 0})).toEqual({
-    type: 'MY_PREFIX__TEST_ASYNC__DONE',
-    payload: {params: PARAM, result: 0}
-  })
-})
 test('sync reducer', () => {
   const reducer = new FluentReducer<'test', IRootState>(DEFAULT_STATE)
   const stringAction = reducer.sync<string>('TEST', (state, newName) => {
