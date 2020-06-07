@@ -1,14 +1,23 @@
 # fluent-reducer
-
 Easy & TypeSafe & Immutable reducer(No Redux Dependency)
-
-Storybook https://sable-virt.github.io/fluent-reducer/
 
 ## How to use
 
 ```
-npm i -S fluent-reducer immer react
+npm i -S fluent-reducer immer
 ```
+
+### [optional] Install your framework
+example for react
+```
+npm i -S react
+```
+
+## Example
+
+- [React](https://github.com/sable-virt/fluent-reducer-examples/tree/master/react-example)
+- [Vue](https://github.com/sable-virt/fluent-reducer-examples/tree/master/vue-example)
+- [Angular](https://github.com/sable-virt/fluent-reducer-examples/tree/master/angular-example)
 
 ### 1. Define State Object
 ```
@@ -23,8 +32,10 @@ const RootState: IRootState = {
 ### 2. Create FluentReducer
 ```
 // 'root' is unique ID
+import { ReactFluentReduer } from 'fluent-reducer/react'
+// for not react app
+// import { FluentReduer } from 'fluent-reducer'
 export const rootReducer = new ReactFluentReducer<'root', IRootState>(RootState, {
-  prefix: 'ROOT_', // [optional] action name prefix
   verbose: true,
   middlewares: [(state, action) => {
     // this state can edit. not plane object, so if you save state like localstorage, use subscribe
@@ -66,7 +77,7 @@ const asyncChangeState = reducer.async<string, string, Error>('ASYNC_CHANGE_NAME
 })
 ```
 
-### 5. hooks
+### 5. react hooks
 
 ```
 export const MyExample: React.FC = () => {
