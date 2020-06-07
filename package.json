@@ -1,6 +1,6 @@
 {
   "name": "fluent-reducer",
-  "version": "1.0.0",
+  "version": "2.0.0",
   "description": "TypeSafe & Immutable useReducer",
   "main": "dist/index.js",
   "typings": "dist/index.d.ts",
@@ -11,7 +11,9 @@
     "test:watch": "jest --watch --no-cache",
     "storybook": "start-storybook -p 6006 --no-dll",
     "build-storybook": "build-storybook",
-    "deploy-storybook": "storybook-to-ghpages"
+    "deploy-storybook": "storybook-to-ghpages",
+    "prepublishOnly": "npm run build && cp -r ./dist/* . && rm -rf ./dist",
+    "postpublish": "git clean -fd"
   },
   "repository": {
     "type": "git",

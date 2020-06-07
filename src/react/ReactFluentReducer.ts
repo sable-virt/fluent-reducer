@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useMemo, useState } from 'react'
-import { TypeDispatch } from './AsyncActionCreator'
-import { FluentReducer, IFluentReducerOption } from './FluentReducer'
+import { TypeDispatch } from '../AsyncActionCreator'
+import { FluentReducer, IFluentReducerOption } from '../FluentReducer'
 
 export class ReactFluentReducer<ID extends string, InS> extends FluentReducer<ID, InS> {
   constructor(public initialState: InS, op: Partial<IFluentReducerOption<InS>> = {}) {

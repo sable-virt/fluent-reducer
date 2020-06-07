@@ -3,9 +3,12 @@ const { CleanWebpackPlugin } = require('clean-webpack-plugin');
 
 module.exports = {
   mode: 'production',
-  entry: './src/index.ts',
+  entry: {
+    index: './src/index.ts',
+    'react/index': './src/react/index.ts'
+  },
   output: {
-    filename: 'index.js',
+    filename: '[name].js',
     path: path.join(__dirname, 'dist'),
     libraryTarget: 'commonjs2'
   },

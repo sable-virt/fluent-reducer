@@ -1,2 +1,4 @@
-example
+.storybook
+__test__
 src
+dist
