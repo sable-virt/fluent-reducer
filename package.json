@@ -30,7 +30,7 @@
   },
   "homepage": "https://github.com/sable-virt/fluent-reducer#readme",
   "peerDependencies": {
-    "immer": "^6.0.9",
+    "immer": "^9.0.6",
     "react": "^16.13.1"
   },
   "devDependencies": {
@@ -51,7 +51,7 @@
     "@types/react": "^16.9.35",
     "babel-loader": "^8.1.0",
     "clean-webpack-plugin": "^3.0.0",
-    "immer": "^6.0.9",
+    "immer": "^9.0.6",
     "jest": "^26.0.1",
     "loglevel": "^1.6.8",
     "react-docgen-typescript-loader": "^3.7.2",
